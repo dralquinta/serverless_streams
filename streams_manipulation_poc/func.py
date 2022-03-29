@@ -1,9 +1,9 @@
 import io
 import json
-import logging
-from kafka import KafkaProducer
-import certifi
 from fdk import response 
+from kafka import KafkaConsumer
+import traceback
+import logging
 
 # Based on the following documentatioN: 
 # Pre-requisites: https://docs.oracle.com/en/cloud/paas/integration-cloud/stream-service-adapter/prerequisites-creating-connection.html
@@ -20,16 +20,14 @@ __SASL_TOKEN='T_YUSe3W7VIbMui2kbj:'
 
 
 
-def handler(ctx, data: io.BytesIO = None):
-        resp = consumer(__SASL_USERNAME, __SASL_TOKEN, __REGION, __STREAM_NAME)
-        return response.Response(
+def handler(ctx, data: io.BytesIO = None):   
+  #  resp = { "All clear here!": "OK"}
+    resp = consumer(__SASL_USERNAME, __SASL_TOKEN, __REGION, __STREAM_NAME)
+    return response.Response(
             ctx,
             response_data=json.dumps(resp),
             headers={"Content-Type": "application/json"}
     )      
-
-
-
 
 
 def consumer(sasl_username, sasl_token, region, stream_name):
@@ -44,7 +42,11 @@ def consumer(sasl_username, sasl_token, region, stream_name):
                             sasl_plain_password = sasl_token)       
         returnable_value = "Topic: "+consumer.topic+" Partition: "+consumer.partition+" Offset: "+ consumer.offset +" Key: "+consumer.key +" Value: "+consumer.value   
         response = { returnable_value: "OK"}
-    except Exception as e:
+    except Exception as e:               
         response = {"Error: "+str(e): "FAULT"}
+        logging.exception(e, exc_info=True)
     return response
+
+
+
 
