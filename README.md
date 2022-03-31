@@ -1,6 +1,11 @@
 # serverless_streams
 This repository contains a PoC for creating and manipulating streams using Oracle Functions
 
+
+## System Architecture
+
+![](./img/System_Architecture.jpg)
+
 ## Creation steps: 
 
 1. Create a virtual environment to have your function code and dependencies installed. 
