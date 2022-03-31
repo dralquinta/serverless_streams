@@ -8,6 +8,7 @@ import traceback
 import logging
 import time
 import random
+import datetime
 
 # Based on the following documentatioN: 
 # Pre-requisites: https://docs.oracle.com/en/cloud/paas/integration-cloud/stream-service-adapter/prerequisites-creating-connection.html
@@ -60,25 +61,25 @@ def oci_consumer(origin_stream, sasl_username, sasl_token, region):
 
     # Process messages
     try:        
-        msg = consumer.poll(0.5)
+        msg = consumer.poll(1.0)
         if msg is None:
             # No message available within timeout.
             # Initial message consumption may take up to
             # `session.timeout.ms` for the consumer group to
             # rebalance and start consuming
             print("Waiting for message or event/error in poll()")       
-            response = { "message": "No New Messages", "time": str(to_ms(time.time()-before))+" ms", "status": "FAILURE" }     
+            response = { "message": "No New Messages", "time": str(to_ms(time.time()-before))+" ms", "status": "FAILURE", "date": format_date(datetime.datetime.now()) }     
             
         else:
             # Check for Kafka message
             record_key = "Null" if msg.key() is None else msg.key().decode('utf-8')
             record_value = msg.value().decode('utf-8')         
             returnable_value = "key: "+ record_key + " value: " + record_value
-            response = { "message": returnable_value, "time": str(to_ms(time.time()-before))+" ms", "status": "SUCCESS" }
+            response = { "message": returnable_value, "time": str(to_ms(time.time()-before))+" ms", "status": "SUCCESS", "date": format_date(datetime.datetime.now()) }
             consumer.close()
             
     except Exception as e:
-        response = {"Error: "+str(e): "FAULT", "status": "FAILURE"}
+        response = {"Error: "+str(e): "FAULT", "status": "FAILURE", "date": format_date(datetime.datetime.now()) }
         logging.exception(e, exc_info=True)
         consumer.close()
     return response
@@ -119,5 +120,11 @@ def acked(err, msg):
         print("Failed to deliver message: {}".format(err))  
     else:  
         delivered_records += 1  
+        
+        
+def format_date(date):
+    #use this example to return formatted date: Thu, 31 Mar 2022 02:59:53 GMT
+    return date.strftime("%a, %d %b %Y %H:%M:%S GMT")   
+    
         
 
