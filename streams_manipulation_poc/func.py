@@ -27,8 +27,9 @@ delivered_records = 0
 
 
 def handler(ctx, data: io.BytesIO = None):       
-    __RESP = oci_consumer(__ORIGIN_STREAM, __SASL_USERNAME, __SASL_TOKEN, __REGION)
-    oci_producer(__DESTINATION_STREAM, __RESP, __SASL_USERNAME, __SASL_TOKEN, __REGION)
+    __RESP = oci_consumer(__ORIGIN_STREAM, __SASL_USERNAME, __SASL_TOKEN, __REGION)      
+    if __RESP['status'] == "SUCCESS":
+        oci_producer(__DESTINATION_STREAM, __RESP, __SASL_USERNAME, __SASL_TOKEN, __REGION)
     return response.Response(
             ctx,
             response_data=json.dumps(__RESP),
@@ -66,18 +67,18 @@ def oci_consumer(origin_stream, sasl_username, sasl_token, region):
             # `session.timeout.ms` for the consumer group to
             # rebalance and start consuming
             print("Waiting for message or event/error in poll()")       
-            response = { "No new messages": "OK", "Time": str(to_ms(time.time()-before))+" ms" }     
+            response = { "message": "No New Messages", "time": str(to_ms(time.time()-before))+" ms", "status": "FAILURE" }     
             
         else:
             # Check for Kafka message
             record_key = "Null" if msg.key() is None else msg.key().decode('utf-8')
             record_value = msg.value().decode('utf-8')         
-            returnable_value = "Consumed record with key "+ record_key + " and value " + record_value
-            response = { returnable_value: "OK", "Time": str(to_ms(time.time()-before))+" ms"}
+            returnable_value = "key: "+ record_key + " value: " + record_value
+            response = { "message": returnable_value, "time": str(to_ms(time.time()-before))+" ms", "status": "SUCCESS" }
             consumer.close()
             
     except Exception as e:
-        response = {"Error: "+str(e): "FAULT"}
+        response = {"Error: "+str(e): "FAULT", "status": "FAILURE"}
         logging.exception(e, exc_info=True)
         consumer.close()
     return response
