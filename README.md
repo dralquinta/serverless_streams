@@ -123,7 +123,55 @@ Allow group Administrators to manage stream-push in tenancy
 
 Follow this documentation for more details: https://docs.oracle.com/en/cloud/paas/integration-cloud/stream-service-adapter/prerequisites-creating-connection.html
 
-3. To create the certificate run: 
-   
-echo -n | openssl s_client -connect cqijnemmtooa.streaming.sa-santiago-1.oci.oraclecloud.com:9092 | sed -ne  '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ociStreaming.cert 
-keytool -keystore streaming_truststore.jks -alias OSSStream -import -file ociStreaming.cert
+3. Once both stream (incoming and outgoing), plus function are done, create a service connector that looks like this: 
+
+![](./img/service_connector.png)
+
+
+4. For testing: 
+   4.1 Push messages using the stand alone producer: 
+
+
+```shell
+[opc@dalquintdevhubscl stand_alone]$ ./producer.sh 
+%4|1648726598.986|CONFWARN|rdkafka#producer-1| [thrd:app]: Configuration property group.id is a consumer property and will be ignored by this producer instance
+%4|1648726598.986|CONFWARN|rdkafka#producer-1| [thrd:app]: Configuration property session.timeout.ms is a consumer property and will be ignored by this producer instance
+Producing record: messageKey0   messageValue0
+Producing record: messageKey1   messageValue1
+Producing record: messageKey2   messageValue2
+Producing record: messageKey3   messageValue3
+Producing record: messageKey4   messageValue4
+Producing record: messageKey5   messageValue5
+Producing record: messageKey6   messageValue6
+Producing record: messageKey7   messageValue7
+Producing record: messageKey8   messageValue8
+Producing record: messageKey9   messageValue9
+Produced record to topic sample_stream partition [0] @ offset 210
+Produced record to topic sample_stream partition [0] @ offset 211
+Produced record to topic sample_stream partition [0] @ offset 212
+Produced record to topic sample_stream partition [0] @ offset 213
+Produced record to topic sample_stream partition [0] @ offset 214
+Produced record to topic sample_stream partition [0] @ offset 215
+Produced record to topic sample_stream partition [0] @ offset 216
+Produced record to topic sample_stream partition [0] @ offset 217
+Produced record to topic sample_stream partition [0] @ offset 218
+Produced record to topic sample_stream partition [0] @ offset 219
+10 messages were produced to topic sample_stream!
+   ```
+
+
+  4.2 Use the stand alone consumer to get messages from the result stream:
+
+```shell
+[opc@dalquintdevhubscl stand_alone]$ ./consumer.sh 
+ecrcloud/oracleidentitycloudservice/denny.alquinta@oracle.com/ocid1.streampool.oc1.sa-santiago-1.amaaaaaatwfhi7yann7kjkdd4ftxo6xjzutflmqvb7za3xovrm4nc6qwmxia
+Consumed record with key messageKey16 and value messageValue{'message': 'key: Null value: testdata2', 'time': '183.64477157592773 ms', 'status': 'SUCCESS', 'date': 'Thu, 31 Mar 2022 11:36:50 GMT'}
+Waiting for message or event/error in poll()
+Waiting for message or event/error in poll()
+Waiting for message or event/error in poll()
+Waiting for message or event/error in poll()
+Waiting for message or event/error in poll()
+  ```
+
+
+

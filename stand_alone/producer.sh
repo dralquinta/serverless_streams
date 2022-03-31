@@ -1,3 +1,7 @@
  #!/bin/sh
 
- python3 producer.py
+source ./venv/bin/activate
+sh dependencies.sh
+source ./venv/bin/activate
+
+python3 producer.py
