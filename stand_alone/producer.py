@@ -43,7 +43,7 @@ if __name__ == '__main__':
             delivered_records += 1  
             print("Produced record to topic {} partition [{}] @ offset {}".format(msg.topic(), msg.partition(), msg.offset()))  
 
-    for n in range(10):  
+    for n in range(2):  
         record_key = "messageKey" + str(n)  
         record_value = "messageValue" + str(n)  
         print("Producing record: {}\t{}".format(record_key, record_value))  

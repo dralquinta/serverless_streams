@@ -76,12 +76,12 @@ def oci_consumer(origin_stream, sasl_username, sasl_token, region):
             record_value = msg.value().decode('utf-8')         
             returnable_value = "key: "+ record_key + " value: " + record_value
             response = { "message": returnable_value, "time": str(to_ms(time.time()-before))+" ms", "status": "SUCCESS", "date": format_date(datetime.datetime.now()) }
-            consumer.close()
+
             
     except Exception as e:
         response = {"Error: "+str(e): "FAULT", "status": "FAILURE", "date": format_date(datetime.datetime.now()) }
         logging.exception(e, exc_info=True)
-        consumer.close()
+    consumer.close()
     return response
     
         
