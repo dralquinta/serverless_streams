@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: streams_manipulation_poc
-version: 0.0.91
+version: 0.0.93
 runtime: python
 build_image: fnproject/python:3.8-dev
 run_image: fnproject/python:3.8

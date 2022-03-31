@@ -94,8 +94,6 @@ def oci_producer(destination_stream, message, sasl_username, sasl_token, region)
         'sasl.mechanism': 'PLAIN',
         'sasl.username': sasl_username,  
         'sasl.password': sasl_token,  
-        'group.id':'group-0',
-        'api.version.request': False,
         'session.timeout.ms': 6000,
     }  
     producer = Producer(**conf)  

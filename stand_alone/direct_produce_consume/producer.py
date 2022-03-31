@@ -22,9 +22,7 @@ if __name__ == '__main__':
         'sasl.mechanism': 'PLAIN',
         'sasl.username': __SASL_USERNAME,  # from step 2 of Prerequisites section
         'sasl.password': __SASL_TOKEN,  # from step 7 of Prerequisites section
-        'group.id':'group-0',
         'api.version.request': False,
-        'session.timeout.ms': 6000,
     }  
   
    # Create Producer instance  
